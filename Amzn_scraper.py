@@ -1,11 +1,12 @@
 from bs4 import BeautifulSoup
 import requests
 import pandas as pd
+import secret
 review_list = []
 
 # Connects to splash to render website as javascript
 def get_soup(url):
-    r = requests.get('http://localhost:8050/render.html', params= {'url' : url, 'wait' : 2})
+    r = requests.get(secret.splash, params= {'url' : url, 'wait' : 2})
     soup = BeautifulSoup(r.text, 'html.parser')
     return soup
  
@@ -26,6 +27,7 @@ def get_reviews(soup):
         pass
 
 # Loops through each review in the set range and adds data to the review_list.
+# Contains Amazon product example
 for x in range(1,100):
     soup = get_soup(f'https://www.amazon.co.uk/Invicta-8926OB-Unisex-Stainless-Automatic/product-reviews/B000JQFX1G/ref=cm_cr_getr_d_paging_btm_prev_1?ie=UTF8&reviewerType=all_reviews&pageNumber={x}')
     print(f'Getting page {x}.')
@@ -38,5 +40,5 @@ for x in range(1,100):
 
 # Convertrs review_list into an excel file ready for data cleaning
 df = pd.DataFrame(review_list)
-df.to_excel('Invicta-Pro-Diver-8926OB-Reviews.xlsx', index = False)
+df.to_excel('test.xlsx', index = False)
 print('Completed.')
