@@ -1,8 +1,11 @@
 from bs4 import BeautifulSoup
 import requests
 import pandas as pd
+import pandasql as pdsql
 import secret
+from nltk.corpus import stopwords
 review_list = []
+stop_words = stopwords.words('english')
 
 # Connects to splash to render website as javascript
 def get_soup(url):
@@ -28,7 +31,7 @@ def get_reviews(soup):
 
 # Loops through each review in the set range and adds data to the review_list.
 # Contains Amazon product example
-for x in range(1,100):
+for x in range(1,5):
     soup = get_soup(f'https://www.amazon.co.uk/Invicta-8926OB-Unisex-Stainless-Automatic/product-reviews/B000JQFX1G/ref=cm_cr_getr_d_paging_btm_prev_1?ie=UTF8&reviewerType=all_reviews&pageNumber={x}')
     print(f'Getting page {x}.')
     get_reviews(soup)
@@ -40,5 +43,16 @@ for x in range(1,100):
 
 # Convertrs review_list into an excel file ready for data cleaning
 df = pd.DataFrame(review_list)
-df.to_excel('test.xlsx', index = False)
-print('Completed.')
+# Drops any rows that have blank 'body' columns
+df.dropna(subset=['body'])
+
+def average_words(x):
+    words = x.split()
+    return sum(len(word) for word in words) / len(words)
+
+# Additional dataset features that could be useful in the future
+df['word_count'] = df['body'].apply(lambda x : len(x.split()))
+df['char_count'] = df['body'].apply(lambda x : len(x))
+df['average_word_length'] = df['body'].apply(lambda x : average_words(x))
+df['stopword_count'] = df['body'].apply(lambda x : len([word for word in x.split() if word.lower() in stop_words]))
+df['stopword_rate'] = df['stopword_count'] / df['word_count']
