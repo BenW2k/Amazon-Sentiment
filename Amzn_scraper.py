@@ -6,6 +6,7 @@ import secret
 from nltk.corpus import stopwords
 review_list = []
 stop_words = stopwords.words('english')
+more_stop_words = ['invicta', 'would', 'one', 'got', 'two',]
 
 # Connects to splash to render website as javascript
 def get_soup(url):
@@ -59,6 +60,13 @@ df['stopword_rate'] = df['stopword_count'] / df['word_count']
 
 # Data cleaning functions (Keeping original data to compare performance between clean and unclean data when modelling)
 
+# Converts all text to lower case
 df['lowercase_body'] = df['body'].apply(lambda x: " ".join(word.lower() for word in x.split()))
+# Removes all punctuation from text
 df['punc_body'] = df['lowercase_body'].str.replace('[^\w\s]', '', regex=True)
+# Removes stopwords found in stop_words from text
+df['no_stopword_body'] = df['punc_body'].apply(lambda x: " ".join(word for word in x.split() if word not in stop_words))
+# Removes additional stopwords found in more_stop_words from text
+df['clean_body'] = df['no_stopword_body'].apply(lambda x: " ".join(word for word in x.split() if word not in more_stop_words))
+
 
