@@ -42,7 +42,7 @@ for x in range(1,5):
     else:
         break
 
-# Convertrs review_list into an excel file ready for data cleaning
+# Converts review_list into an excel file ready for data cleaning
 df = pd.DataFrame(review_list)
 # Drops any rows that have blank 'body' columns
 df.dropna(subset=['body'])
