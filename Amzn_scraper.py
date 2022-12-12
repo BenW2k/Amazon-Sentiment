@@ -56,3 +56,9 @@ df['char_count'] = df['body'].apply(lambda x : len(x))
 df['average_word_length'] = df['body'].apply(lambda x : average_words(x))
 df['stopword_count'] = df['body'].apply(lambda x : len([word for word in x.split() if word.lower() in stop_words]))
 df['stopword_rate'] = df['stopword_count'] / df['word_count']
+
+# Data cleaning functions (Keeping original data to compare performance between clean and unclean data when modelling)
+
+df['lowercase_body'] = df['body'].apply(lambda x: " ".join(word.lower() for word in x.split()))
+df['punc_body'] = df['lowercase_body'].str.replace('[^\w\s]', '', regex=True)
+
