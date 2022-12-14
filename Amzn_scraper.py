@@ -3,6 +3,7 @@ import requests
 import pandas as pd
 import pandasql as pdsql
 import secret
+from textblob import Word
 from nltk.corpus import stopwords
 review_list = []
 stop_words = stopwords.words('english')
@@ -68,5 +69,8 @@ df['punc_body'] = df['lowercase_body'].str.replace('[^\w\s]', '', regex=True)
 df['no_stopword_body'] = df['punc_body'].apply(lambda x: " ".join(word for word in x.split() if word not in stop_words))
 # Removes additional stopwords found in more_stop_words from text
 df['clean_body'] = df['no_stopword_body'].apply(lambda x: " ".join(word for word in x.split() if word not in more_stop_words))
+
+# Lemmatization
+df['clean_body'].apply(lambda x: "" .join(Word(word).lemmatize() for word in x.split()))
 
 
