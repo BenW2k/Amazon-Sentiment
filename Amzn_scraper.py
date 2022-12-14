@@ -71,6 +71,6 @@ df['no_stopword_body'] = df['punc_body'].apply(lambda x: " ".join(word for word 
 df['clean_body'] = df['no_stopword_body'].apply(lambda x: " ".join(word for word in x.split() if word not in more_stop_words))
 
 # Lemmatization
-df['clean_body'].apply(lambda x: "" .join(Word(word).lemmatize() for word in x.split()))
+df['lemmatized'] = df['clean_body'].apply(lambda x: "" .join(Word(word).lemmatize() for word in x.split()))
 
 
