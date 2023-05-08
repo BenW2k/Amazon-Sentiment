@@ -32,6 +32,7 @@ def get_reviews(soup):
             'title': item.find('a', {'data-hook': 'review-title'}).text.strip(),
             'rating': float(item.find('i', {'data-hook': 'review-star-rating'}).text.replace('out of 5 stars', '').strip()),
             'body': item.find('span', {'data-hook': 'review-body'}).text.strip(),
+            'date': item.find('span', {'data-hook': 'review-date'}).text.strip()
             }
             review_list.append(review)
     except:
@@ -39,7 +40,7 @@ def get_reviews(soup):
 
 # Loops through each review in the set range and adds data to the review_list.
 # Contains Amazon product example
-for x in range(1,10):
+for x in range(1,51):
     soup = get_soup(f'https://www.amazon.co.uk/Invicta-8926OB-Unisex-Stainless-Automatic/product-reviews/B000JQFX1G/ref=cm_cr_getr_d_paging_btm_prev_1?ie=UTF8&reviewerType=all_reviews&pageNumber={x}')
     print(f'Getting page {x}.')
     get_reviews(soup)
@@ -53,6 +54,9 @@ for x in range(1,10):
 df = pd.DataFrame(review_list)
 # Drops any rows that have blank 'body' columns
 df.dropna(subset=['body'])
+
+# Removes the location string from the date, if empty returns None
+df['review_date'] = df['date'].apply(lambda x: x.split('on ')[-1] if isinstance(x, str) else None)
 
 # Additional dataset features that could be useful in the future
 df['word_count'] = df['body'].apply(lambda x : len(x.split()))
@@ -87,8 +91,7 @@ def sentiment_score(review):
     result = model(tokens)
     return int(torch.argmax(result.logits)+1)
 
-#Runs sentiment analysis on 500 reviews (512 is max token limit for the model so 500 reviews is the maximum)
+# Runs sentiment analysis on 500 reviews (512 is max token limit for the model so 500 reviews is the maximum)
 df['sentiment'] = df['lemmatized'].apply(lambda x: sentiment_score(x[:100]))
 df['base sentiment'] =  df['body'].apply(lambda x: sentiment_score(x[:100]))
-df.to_csv(f'{product_name}_sentiment.csv')
-
+df.to_csv(f'{product_name}_test_sentiment.csv')
