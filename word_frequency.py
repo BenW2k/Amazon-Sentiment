@@ -4,7 +4,7 @@ from collections import Counter
 import nltk
 from nltk.probability import FreqDist
 
-df = pd.read_csv('Invicta-8926OB-Unisex-Stainless-Automatic_sentiment.csv')
+df = pd.read_csv('Invicta-8926OB-sentiment.csv')
 
 df['general sentiment'] = 'Positive'
 df.loc[df['base sentiment'] < 3, 'general sentiment'] = 'Negative'
